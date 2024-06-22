@@ -1,4 +1,4 @@
-package com.example.kmmsocial.android.auth.signup
+package com.example.kmmsocial.android.auth.login
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -29,11 +29,11 @@ import com.example.kmmsocial.android.common.theming.ExtraLargeSpacing
 import com.example.kmmsocial.android.common.theming.LargeSpacing
 import com.example.kmmsocial.android.common.theming.MediumSpacing
 
+
 @Composable
-fun SignUpScreen(
+fun LoginScreen(
     modifier: Modifier = Modifier,
-    uiState: SignUpUiState,
-    onUserNameChange: (String) -> Unit,
+    uiState: LoginUiState,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
 ) {
@@ -58,55 +58,43 @@ fun SignUpScreen(
         verticalArrangement = Arrangement.spacedBy(LargeSpacing)
     ) {
         CustomTextField(
-            value = uiState.username,
-            onValueChange = onUserNameChange,
-            hint = R.string.username,
-            keyboardType = KeyboardType.Text
-
-        )
-
-        CustomTextField(
             value = uiState.email,
             onValueChange = onEmailChange,
             hint = R.string.email_hint,
             keyboardType = KeyboardType.Email
-        )
 
+        )
         CustomTextField(
             value = uiState.password,
             onValueChange = onPasswordChange,
             hint = R.string.password_hint,
-            keyboardType = KeyboardType.Password,
-            isPasswordTextField = true
+            isPasswordTextField = true,
+            keyboardType = KeyboardType.Password
         )
 
-        Button(onClick = {
+        Button(
+            onClick = {
 
-        },
-            modifier = modifier
+            },
+            modifier = Modifier
                 .fillMaxWidth()
                 .height(ButtonHeight),
             elevation = ButtonDefaults.elevation(
                 defaultElevation = 0.dp
             ),
-            shape = MaterialTheme.shapes.medium
+            shape = MaterialTheme.shapes.medium,
         ) {
-            Text(text = stringResource(id = R.string.signup_button_hint))
-
+            Text(text = stringResource(id = R.string.login_button_label))
         }
-
     }
 }
 
 @Preview
 @Composable
- fun SignUpscreenPreview() {
-SocialAppTheme {
-    SignUpScreen(
-        uiState = SignUpUiState(),
-        onUserNameChange = {},
-        onEmailChange = {},
-        onPasswordChange = {}
-    )
-}
+private fun LoginScreenPreview() {
+    SocialAppTheme {
+        LoginScreen(uiState = LoginUiState(), onEmailChange = {}) {
+
+        }
+    }
 }

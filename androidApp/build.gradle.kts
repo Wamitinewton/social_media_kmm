@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.kotlinAndroid)
-    id("com.google.devtools.ksp") version "2.0.0-1.0.22"
+    id("com.google.devtools.ksp") version "1.9.0-1.0.11" // Make sure this version is compatible with your Kotlin version
 
 }
 
@@ -38,6 +38,13 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    applicationVariants.all {
+        addJavaSourceFoldersToModel(
+            layout.buildDirectory.dir("generated/ksp/$name/kotlin").get().asFile
+        )
+    }
+
+
 }
 
 dependencies {
