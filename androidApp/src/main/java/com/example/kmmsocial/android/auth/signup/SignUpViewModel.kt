@@ -4,11 +4,39 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.kmmsocial.auth.domain.usecases.SignUpUseCase
+import com.example.kmmsocial.common.util.Result
+import kotlinx.coroutines.launch
 
-class SignUpViewModel: ViewModel() {
+class SignUpViewModel(
+    private val signUpUseCase: SignUpUseCase
+): ViewModel() {
     var uiState by mutableStateOf(SignUpUiState())
 
         private set
+
+    fun signUp(){
+        viewModelScope.launch {
+            uiState = uiState.copy(isAuthenticating = true)
+            val authResultData = signUpUseCase(uiState.email, uiState.username, uiState.password)
+
+            uiState = when(authResultData){
+                is Result.Error -> {
+                    uiState.copy(
+                        isAuthenticating = false,
+                        autherrorMessage = authResultData.message
+                    )
+                }
+                is Result.Success -> {
+                    uiState.copy(
+                        isAuthenticating = false,
+                        authenticationSucceed = true
+                    )
+                }
+            }
+        }
+    }
 
     fun updateUsername(input: String){
         uiState = uiState.copy(username = input )
@@ -25,4 +53,7 @@ data class SignUpUiState(
     var username: String = "",
     var email: String = "",
     var password: String = "",
+    var isAuthenticating: Boolean = false,
+    var autherrorMessage: String? = null,
+    var authenticationSucceed: Boolean = false
 )

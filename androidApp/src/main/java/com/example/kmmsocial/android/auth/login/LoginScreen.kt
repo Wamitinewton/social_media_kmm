@@ -1,5 +1,6 @@
 package com.example.kmmsocial.android.auth.login
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -15,13 +16,16 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -42,78 +46,103 @@ fun LoginScreen(
     uiState: LoginUiState,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
+    onNavigateToHome: () -> Unit,
+    onSignInClick: () -> Unit,
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .background(
-                color = if (isSystemInDarkTheme()) {
-                    MaterialTheme.colors.background
-                } else {
-                    MaterialTheme.colors.surface
-                }
-            )
-            .padding(
-                top = ExtraLargeSpacing + LargeSpacing,
-                start = LargeSpacing + MediumSpacing,
-                end = LargeSpacing + MediumSpacing,
-                bottom = LargeSpacing
-            ),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(LargeSpacing)
-    ) {
+    val context = LocalContext.current
+   Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center){
+       Column(
+           modifier = modifier
+               .fillMaxSize()
+               .verticalScroll(rememberScrollState())
+               .background(
+                   color = if (isSystemInDarkTheme()) {
+                       MaterialTheme.colors.background
+                   } else {
+                       MaterialTheme.colors.surface
+                   }
+               )
+               .padding(
+                   top = ExtraLargeSpacing + LargeSpacing,
+                   start = LargeSpacing + MediumSpacing,
+                   end = LargeSpacing + MediumSpacing,
+                   bottom = LargeSpacing
+               ),
+           horizontalAlignment = Alignment.CenterHorizontally,
+           verticalArrangement = Arrangement.spacedBy(LargeSpacing)
+       ) {
 
-        Box(modifier = Modifier
-            .height(200.dp)
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(size = 16.dp))
+           Box(modifier = Modifier
+               .height(200.dp)
+               .fillMaxWidth()
+               .clip(RoundedCornerShape(size = 16.dp))
 
-        ) {
-            Image(
-                contentScale = ContentScale.FillBounds,
-                painter = painterResource(id = R.drawable.image),
-                contentDescription = null)
+           ) {
+               Image(
+                   contentScale = ContentScale.FillBounds,
+                   painter = painterResource(id = R.drawable.image),
+                   contentDescription = null)
+           }
+
+           CustomTextField(
+               value = uiState.email,
+               onValueChange = onEmailChange,
+               hint = R.string.email_hint,
+               keyboardType = KeyboardType.Email
+
+           )
+           CustomTextField(
+               value = uiState.password,
+               onValueChange = onPasswordChange,
+               hint = R.string.password_hint,
+               isPasswordTextField = true,
+               keyboardType = KeyboardType.Password
+           )
+
+           Button(
+               onClick = {
+                   onSignInClick()
+               },
+               modifier = Modifier
+                   .fillMaxWidth()
+                   .height(ButtonHeight),
+               elevation = ButtonDefaults.elevation(
+                   defaultElevation = 0.dp
+               ),
+               shape = MaterialTheme.shapes.medium,
+           ) {
+               Text(text = stringResource(id = R.string.login_button_label))
+           }
+       }
+       if (uiState.isAuthenticating){
+           CircularProgressIndicator()
+       }
+   }
+
+    LaunchedEffect(
+        key1 = uiState.authenticationSucces,
+        key2 = uiState.authErrorMessage,
+        block = {
+            if (uiState.authenticationSucces){
+                onNavigateToHome()
+            }
+            if (uiState.authErrorMessage != null){
+                Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show()
+            }
         }
-
-        CustomTextField(
-            value = uiState.email,
-            onValueChange = onEmailChange,
-            hint = R.string.email_hint,
-            keyboardType = KeyboardType.Email
-
-        )
-        CustomTextField(
-            value = uiState.password,
-            onValueChange = onPasswordChange,
-            hint = R.string.password_hint,
-            isPasswordTextField = true,
-            keyboardType = KeyboardType.Password
-        )
-
-        Button(
-            onClick = {
-
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(ButtonHeight),
-            elevation = ButtonDefaults.elevation(
-                defaultElevation = 0.dp
-            ),
-            shape = MaterialTheme.shapes.medium,
-        ) {
-            Text(text = stringResource(id = R.string.login_button_label))
-        }
-    }
+    )
 }
 
 @Preview
 @Composable
 private fun LoginScreenPreview() {
     SocialAppTheme {
-        LoginScreen(uiState = LoginUiState(), onEmailChange = {}) {
-
-        }
+        LoginScreen(
+            uiState = LoginUiState(),
+            onEmailChange = {},
+            onPasswordChange = {},
+            onNavigateToHome = {},
+            onSignInClick = {}
+        )
     }
 }

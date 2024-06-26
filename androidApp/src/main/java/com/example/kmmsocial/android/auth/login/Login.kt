@@ -1,12 +1,13 @@
 package com.example.kmmsocial.android.auth.login
 
 import androidx.compose.runtime.Composable
+import com.example.kmmsocial.android.destinations.HomeScreenDestination
 import com.ramcosta.composedestinations.annotation.Destination
 
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.koinViewModel
 
-@Destination
+@Destination(start = true)
 @Composable
 fun Login(
     navigator: DestinationsNavigator
@@ -15,6 +16,10 @@ fun Login(
     LoginScreen(
         uiState = viewModel.loginUiState,
         onEmailChange = viewModel::updateEmail,
-        onPasswordChange = viewModel::updatePassword
+        onPasswordChange = viewModel::updatePassword,
+        onSignInClick = viewModel:: signIn,
+        onNavigateToHome = {
+            navigator.navigate(HomeScreenDestination)
+        }
     )
 }

@@ -1,8 +1,8 @@
 package com.example.kmmsocial.android.auth.signup
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,14 +16,16 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -44,81 +46,105 @@ fun SignUpScreen(
     onUserNameChange: (String) -> Unit,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
-    onNavigateToLogin: () -> Unit
+    onNavigateToLogin: () -> Unit,
+    onNavigateToHome: () -> Unit,
+    onSignUpClick: () -> Unit
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .background(
-                color = if (isSystemInDarkTheme()) {
-                    MaterialTheme.colors.background
-                } else {
-                    MaterialTheme.colors.surface
-                }
-            )
-            .padding(
-                top = ExtraLargeSpacing + LargeSpacing,
-                start = LargeSpacing + MediumSpacing,
-                end = LargeSpacing + MediumSpacing,
-                bottom = LargeSpacing
-            ),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(LargeSpacing)
-    ) {
-
-        Box(modifier = Modifier
-            .height(200.dp)
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(size = 16.dp))
-
-        ) {
-            Image(
-                contentScale = ContentScale.FillBounds,
-                painter = painterResource(id = R.drawable.image),
-                contentDescription = null)
-        }
-
-
-        CustomTextField(
-            value = uiState.username,
-            onValueChange = onUserNameChange,
-            hint = R.string.username,
-            keyboardType = KeyboardType.Text
-
-        )
-
-        CustomTextField(
-            value = uiState.email,
-            onValueChange = onEmailChange,
-            hint = R.string.email_hint,
-            keyboardType = KeyboardType.Email
-        )
-
-        CustomTextField(
-            value = uiState.password,
-            onValueChange = onPasswordChange,
-            hint = R.string.password_hint,
-            keyboardType = KeyboardType.Password,
-            isPasswordTextField = true
-        )
-
-        Button(onClick = {
-            onNavigateToLogin()
-        },
+    val context = LocalContext.current
+    Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center){
+        Column(
             modifier = modifier
-                .fillMaxWidth()
-                .height(ButtonHeight),
-            elevation = ButtonDefaults.elevation(
-                defaultElevation = 0.dp
-            ),
-            shape = MaterialTheme.shapes.medium
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .background(
+                    color = if (isSystemInDarkTheme()) {
+                        MaterialTheme.colors.background
+                    } else {
+                        MaterialTheme.colors.surface
+                    }
+                )
+                .padding(
+                    top = ExtraLargeSpacing + LargeSpacing,
+                    start = LargeSpacing + MediumSpacing,
+                    end = LargeSpacing + MediumSpacing,
+                    bottom = LargeSpacing
+                ),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(LargeSpacing)
         ) {
-            Text(text = stringResource(id = R.string.signup_button_hint))
+
+            Box(modifier = Modifier
+                .height(200.dp)
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(size = 16.dp))
+
+            ) {
+                Image(
+                    contentScale = ContentScale.FillBounds,
+                    painter = painterResource(id = R.drawable.image),
+                    contentDescription = null)
+            }
+
+
+            CustomTextField(
+                value = uiState.username,
+                onValueChange = onUserNameChange,
+                hint = R.string.username,
+                keyboardType = KeyboardType.Text
+
+            )
+
+            CustomTextField(
+                value = uiState.email,
+                onValueChange = onEmailChange,
+                hint = R.string.email_hint,
+                keyboardType = KeyboardType.Email
+            )
+
+            CustomTextField(
+                value = uiState.password,
+                onValueChange = onPasswordChange,
+                hint = R.string.password_hint,
+                keyboardType = KeyboardType.Password,
+                isPasswordTextField = true
+            )
+
+            Button(onClick = {
+               onSignUpClick()
+            },
+                modifier = modifier
+                    .fillMaxWidth()
+                    .height(ButtonHeight),
+                elevation = ButtonDefaults.elevation(
+                    defaultElevation = 0.dp
+                ),
+                shape = MaterialTheme.shapes.medium
+            ) {
+                Text(text = stringResource(id = R.string.signup_button_hint))
+
+            }
 
         }
-
+        if (uiState.isAuthenticating){
+            CircularProgressIndicator()
+        }
     }
+
+    LaunchedEffect(
+        key1 =uiState.authenticationSucceed,
+        key2 = uiState.autherrorMessage,
+        block = {
+            if (uiState.authenticationSucceed){
+                onNavigateToHome()
+            }
+
+            if (uiState.autherrorMessage != null){
+                Toast.makeText(context, uiState.autherrorMessage, Toast.LENGTH_SHORT).show()
+
+            }
+        }
+    )
+
 }
 
 @Preview
@@ -131,6 +157,8 @@ SocialAppTheme {
         onEmailChange = {},
         onPasswordChange = {},
         onNavigateToLogin = {},
+        onNavigateToHome = {},
+        onSignUpClick = {}
     )
 }
 }
