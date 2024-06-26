@@ -2,6 +2,7 @@ package com.example.kmmsocial.android.auth.login
 
 import androidx.compose.runtime.Composable
 import com.example.kmmsocial.android.destinations.HomeScreenDestination
+import com.example.kmmsocial.android.destinations.SignUpDestination
 import com.ramcosta.composedestinations.annotation.Destination
 
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -17,9 +18,18 @@ fun Login(
         uiState = viewModel.loginUiState,
         onEmailChange = viewModel::updateEmail,
         onPasswordChange = viewModel::updatePassword,
-        onSignInClick = viewModel:: signIn,
+        onSignInClick = viewModel::signIn,
         onNavigateToHome = {
-            navigator.navigate(HomeScreenDestination)
+            navigator.navigate(HomeScreenDestination) {
+                popUpTo(HomeScreenDestination.route) { inclusive = true }
+            }
+        },
+        onNavigateToSignup = {
+            navigator.navigate(SignUpDestination) {
+                popUpTo(SignUpDestination.route) {
+                    inclusive = true
+                }
+            }
         }
     )
 }

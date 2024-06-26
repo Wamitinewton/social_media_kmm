@@ -2,6 +2,7 @@ package com.example.kmmsocial.android.auth.signup
 
 import androidx.compose.runtime.Composable
 import com.example.kmmsocial.android.destinations.HomeScreenDestination
+import com.example.kmmsocial.android.destinations.LoginDestination
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.koinViewModel
@@ -9,7 +10,7 @@ import org.koin.androidx.compose.koinViewModel
 
 @Destination()
 @Composable
- fun SignUp(
+fun SignUp(
     navigator: DestinationsNavigator
 ) {
     val viewModel: SignUpViewModel = koinViewModel()
@@ -19,10 +20,19 @@ import org.koin.androidx.compose.koinViewModel
         onEmailChange = viewModel::updateEmail,
         onPasswordChange = viewModel::updatePassword,
         onNavigateToLogin = {
-
+            navigator.navigate(LoginDestination) {
+                popUpTo(LoginDestination.route) {
+                    inclusive = true
+                }
+            }
         },
         onNavigateToHome = {
-                           navigator.navigate(HomeScreenDestination)
+            navigator.navigate(HomeScreenDestination) {
+                // this is to remove the route from the backstack after navigation
+                popUpTo(HomeScreenDestination.route) {
+                    inclusive = true
+                }
+            }
         },
         onSignUpClick = viewModel::signUp
     )

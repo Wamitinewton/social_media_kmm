@@ -3,10 +3,12 @@ package com.example.kmmsocial.android.auth.signup
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -24,6 +26,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -38,6 +41,7 @@ import com.example.kmmsocial.android.common.theming.ButtonHeight
 import com.example.kmmsocial.android.common.theming.ExtraLargeSpacing
 import com.example.kmmsocial.android.common.theming.LargeSpacing
 import com.example.kmmsocial.android.common.theming.MediumSpacing
+import com.example.kmmsocial.android.common.theming.SmallSpacint
 
 @Composable
 fun SignUpScreen(
@@ -51,7 +55,7 @@ fun SignUpScreen(
     onSignUpClick: () -> Unit
 ) {
     val context = LocalContext.current
-    Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center){
+    Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(
             modifier = modifier
                 .fillMaxSize()
@@ -73,16 +77,18 @@ fun SignUpScreen(
             verticalArrangement = Arrangement.spacedBy(LargeSpacing)
         ) {
 
-            Box(modifier = Modifier
-                .height(200.dp)
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(size = 16.dp))
+            Box(
+                modifier = Modifier
+                    .height(200.dp)
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(size = 16.dp))
 
             ) {
                 Image(
                     contentScale = ContentScale.FillBounds,
                     painter = painterResource(id = R.drawable.image),
-                    contentDescription = null)
+                    contentDescription = null
+                )
             }
 
 
@@ -109,9 +115,10 @@ fun SignUpScreen(
                 isPasswordTextField = true
             )
 
-            Button(onClick = {
-               onSignUpClick()
-            },
+            Button(
+                onClick = {
+                    onSignUpClick()
+                },
                 modifier = modifier
                     .fillMaxWidth()
                     .height(ButtonHeight),
@@ -124,21 +131,25 @@ fun SignUpScreen(
 
             }
 
+            GoToSignup(modifier) {
+                onNavigateToLogin()
+            }
+
         }
-        if (uiState.isAuthenticating){
+        if (uiState.isAuthenticating) {
             CircularProgressIndicator()
         }
     }
 
     LaunchedEffect(
-        key1 =uiState.authenticationSucceed,
+        key1 = uiState.authenticationSucceed,
         key2 = uiState.autherrorMessage,
         block = {
-            if (uiState.authenticationSucceed){
+            if (uiState.authenticationSucceed) {
                 onNavigateToHome()
             }
 
-            if (uiState.autherrorMessage != null){
+            if (uiState.autherrorMessage != null) {
                 Toast.makeText(context, uiState.autherrorMessage, Toast.LENGTH_SHORT).show()
 
             }
@@ -147,18 +158,40 @@ fun SignUpScreen(
 
 }
 
+@Composable
+fun GoToSignup(
+    modifier: Modifier = Modifier,
+    onNavigateToLogin: () -> Unit
+) {
+    Row(
+        modifier = modifier, horizontalArrangement = Arrangement.spacedBy(
+            SmallSpacint
+        )
+    ) {
+        Text(text = "Already have an account?", style = MaterialTheme.typography.caption)
+        Text(
+            text = "Login",
+            style = MaterialTheme.typography.caption,
+            color = Color.Blue,
+            modifier = modifier.clickable { onNavigateToLogin() }
+        )
+    }
+
+}
+
+
 @Preview
 @Composable
- fun SignUpscreenPreview() {
-SocialAppTheme {
-    SignUpScreen(
-        uiState = SignUpUiState(),
-        onUserNameChange = {},
-        onEmailChange = {},
-        onPasswordChange = {},
-        onNavigateToLogin = {},
-        onNavigateToHome = {},
-        onSignUpClick = {}
-    )
-}
+fun SignUpscreenPreview() {
+    SocialAppTheme {
+        SignUpScreen(
+            uiState = SignUpUiState(),
+            onUserNameChange = {},
+            onEmailChange = {},
+            onPasswordChange = {},
+            onNavigateToLogin = {},
+            onNavigateToHome = {},
+            onSignUpClick = {}
+        )
+    }
 }
