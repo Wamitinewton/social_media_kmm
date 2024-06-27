@@ -3,6 +3,9 @@ plugins {
     alias(libs.plugins.kotlinAndroid)
     id("com.google.devtools.ksp") version "1.9.0-1.0.11" // Make sure this version is compatible with your Kotlin version
 
+    //Kotlinx Serialization
+    kotlin("plugin.serialization") version "1.9.10"
+
 }
 
 android {
