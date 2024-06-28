@@ -54,7 +54,7 @@ fun SocialApp(
     LaunchedEffect(
         key1 = token,
         block = {
-            if (!token.isNullOrEmpty()){
+            if (token != null && token.isEmpty()){
                 navHostController.navigate(LoginDestination.route){
                     popUpTo(HomeScreenDestination.route){
                         inclusive = true
